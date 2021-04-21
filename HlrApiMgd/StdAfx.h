@@ -40,8 +40,7 @@
 #using <mscorlib.dll>
 #using <System.dll>
 #using <System.Core.dll>
-
-#using <D:\ObjectARX2019\inc\AcDbMgd.dll>
+#using <D:\Work\ArxSdks\ObjectARX2021\inc\AcDbMgd.dll>
 
 #include <vcclr.h>
 

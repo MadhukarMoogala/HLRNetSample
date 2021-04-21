@@ -20,23 +20,31 @@ namespace HlrNetSample {
 		[CommandMethod("test")]
 		public void Test() {
 			Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Hello World!\n");
+			Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
 
 			PromptSelectionResult res = Application.DocumentManager.MdiActiveDocument.Editor.GetSelection();
 			if (res.Status != PromptStatus.OK )
 				return ;
 
-			AcMgHlrCollector collector =new AcMgHlrCollector ();
-			collector.DeleteState =true ;
-			ObjectId [] ids =res.Value.GetObjectIds ();
+            AcMgHlrCollector collector = new AcMgHlrCollector
+            {
+                DeleteState = true
+            };
+            ObjectId [] ids =res.Value.GetObjectIds ();
 			for ( int i =0 ; i < ids.Length ; i++ )
 				collector.addEntity (ids [0]) ;
 
 			// Get current viewport settings
-			Vector3d viewdir = new Vector3d(1,1,1);// Application.GetSystemVariable("viewdir");
-			Point3d target = new Point3d(0, 0, 0);// Application.GetSystemVariable("target");
+			Point3d tmpt = (Point3d)Application.GetSystemVariable("viewdir"); //new Vector3d(1,1,1);
+			//transform UCS to WCS;
+			Vector3d viewdir = tmpt.TransformBy(ed.CurrentUserCoordinateSystem).GetAsVector();
+			Point3d target = (Point3d)Application.GetSystemVariable("target"); //new Point3d(0, 0, 0);
+			//transform UCS to WCS
+			target = target.TransformBy(ed.CurrentUserCoordinateSystem);
+
 
 			// Process hidden line removal
-			
+
 			AcMgHlrEngine hlr =new AcMgHlrEngine (
 				target, viewdir,
 				(int)(HlrControl.Entity | HlrControl.Block| HlrControl.Subentity | HlrControl.ShowAll | HlrControl.MeshSilhouettes | HlrControl.Progress) //Madhukar, progress param needed
